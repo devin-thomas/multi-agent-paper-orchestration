@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "multi-agent-paper-orchestration"
+version = "0.1.0"
+description = "Portfolio refactor of a pydantic-ai multi-agent sales and inventory orchestration capstone."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=2.0",
+    "openai>=2.29.0",
+    "pandas>=2.2",
+    "pydantic>=2,<3",
+    "pydantic-ai>=2.5.0",
+    "python-dotenv>=1.1",
+    "sqlalchemy>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.8",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = ["legacy"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

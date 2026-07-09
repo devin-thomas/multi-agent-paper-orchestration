@@ -1,0 +1,26 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.env
+.env.*
+!.env.example
+
+# Generated local artifacts
+*.db
+*.sqlite
+*.sqlite3
+*.log
+test_results.csv
+evaluation_report.json
+outputs/
+tmp/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
