@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
+from pydantic_ai.models.openai import OpenAIChatModel
 
 from paper_orchestration.config import AgentModelOverride, ProviderProfile, Settings
 from paper_orchestration.providers.base import ModelCapabilities, ModelCompatibilityError
@@ -31,15 +32,16 @@ def make_settings(
     )
 
 
-def test_factory_resolves_global_default_and_role_override() -> None:
+def test_factory_resolves_global_default_and_role_override(monkeypatch) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "fake-key")
     settings = make_settings(
         overrides={"quoting": AgentModelOverride(profile="hosted", model="special-model")}
     )
 
     factory = ModelFactory(settings)
 
-    assert factory.preflight("intake").create_model() == "ollama:small-model"
-    assert factory.preflight("quoting").create_model() == "openai:special-model"
+    assert isinstance(factory.preflight("intake").create_model(), OpenAIChatModel)
+    assert factory.preflight("quoting").model == "special-model"
 
 
 def test_team_preflight_reports_precise_missing_capability() -> None:

@@ -7,11 +7,10 @@ from typing import Any
 
 from ..config import Settings, load_settings
 from .base import (
-    ModelCapabilities,
     ModelCompatibilityError,
     ProviderAdapter,
-    capabilities_from_names,
 )
+from .first_class import build_first_class_adapter
 
 
 @dataclass(frozen=True)
@@ -25,21 +24,6 @@ class ResolvedModel:
 
     def create_model(self) -> Any:
         return self.adapter.create_model()
-
-
-@dataclass(frozen=True)
-class ConfiguredProviderAdapter:
-    """Default adapter for the pydantic-ai provider model-string boundary."""
-
-    provider: str
-    model: str
-    _capabilities: ModelCapabilities
-
-    def capabilities(self) -> ModelCapabilities:
-        return self._capabilities
-
-    def create_model(self) -> str:
-        return f"{self.provider}:{self.model}"
 
 
 class ModelFactory:
@@ -59,11 +43,7 @@ class ModelFactory:
         adapter = self._adapters.get(role) or self._adapters.get(provider)
         if adapter is None:
             profile = self._profile_for_role(role, provider)
-            adapter = ConfiguredProviderAdapter(
-                provider=provider,
-                model=model,
-                _capabilities=capabilities_from_names(profile.capabilities),
-            )
+            adapter = build_first_class_adapter(provider, model, profile)
         return ResolvedModel(role=role, provider=provider, model=model, adapter=adapter)
 
     def preflight(self, role: str) -> ResolvedModel:

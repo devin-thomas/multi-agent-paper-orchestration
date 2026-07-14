@@ -2,6 +2,7 @@
 
 from .base import ModelCapabilities, ModelCompatibilityError, ProviderAdapter
 from .factory import ModelFactory, ResolvedModel, build_model_factory
+from .first_class import ProviderConfigurationError
 
 __all__ = [
     "ModelCapabilities",
@@ -10,4 +11,5 @@ __all__ = [
     "ProviderAdapter",
     "ResolvedModel",
     "build_model_factory",
+    "ProviderConfigurationError",
 ]

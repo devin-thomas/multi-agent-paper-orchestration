@@ -198,11 +198,13 @@ Suggested headline:
 
 - Task 09, Model Factory And Capability Preflight, is complete. All five workflow roles now resolve through a project-owned provider adapter factory, configuration-only role overrides are honored, and team capability preflight rejects missing structured-output or tool-calling support before agent construction. Work log: started 2026-07-14 12:42:09 CDT, completed in this task loop.
 
+- Task 10, First-Class Model Providers, is complete. OpenAI, Anthropic Claude, Google Gemini, and Ollama profiles now construct through provider-specific Pydantic AI adapters with credential/endpoint validation and profile capability mapping; direct hosted-provider dependencies are installed by default. Work log: started 2026-07-14 15:03:55 CDT, completed in this task loop. The required repository tests, Ruff checks, and real Ollama smoke test pass; `pip check` remains blocked by unrelated globally installed `awsebcli` and OpenTelemetry conflicts.
+
 ## Remaining Dependency Plan
 
 - Task 08 is the next task and defines the provider-neutral configuration contract.
 - Task 09 depends on Task 08 and establishes the factory and capability boundary used by every later task.
-- Task 10 depends on Task 09 and implements the four first-class providers.
+- Task 10 depends on Task 09 and implements the four first-class providers; complete.
 - Task 12 depends on Tasks 09 and 10; its extension API must conform to the same contract as first-class adapters.
 - Task 13 can begin after Task 10, but its final metadata assertions depend on the Task 12 contract names being stable.
 - Task 14 depends on Tasks 10, 12, and 13 and is the full validation checkpoint.
@@ -210,7 +212,7 @@ Suggested headline:
 
 ## Next Implementation Slice
 
-Run Task 08 only. It should leave the existing local Ollama integration test and legacy OpenAI configuration green while introducing the TOML contract that Task 09 will consume. Do not start provider adapters inside Task 08.
+Run Task 12 only. It should add the provider extension registration API and conformance suite against the first-class adapter contract. Do not start evaluation metadata or CI work inside Task 12.
 
 ## Task 11: Spicy Replay Dataset
 
