@@ -200,12 +200,14 @@ Suggested headline:
 
 - Task 10, First-Class Model Providers, is complete. OpenAI, Anthropic Claude, Google Gemini, and Ollama profiles now construct through provider-specific Pydantic AI adapters with credential/endpoint validation and profile capability mapping; direct hosted-provider dependencies are installed by default. Work log: started 2026-07-14 15:03:55 CDT, completed in this task loop. The required repository tests, Ruff checks, and real Ollama smoke test pass; `pip check` remains blocked by unrelated globally installed `awsebcli` and OpenTelemetry conflicts.
 
+- Task 12, Provider Extensions And Conformance, is complete. Extension providers can register through the `paper_orchestration.providers` entry-point group or an explicit registry, use the shared adapter contract, and validate offline through the reusable conformance assertion and reference adapter. Work log: started 2026-07-14 16:11:45 CDT, completed in this task loop.
+
 ## Remaining Dependency Plan
 
 - Task 08 is the next task and defines the provider-neutral configuration contract.
 - Task 09 depends on Task 08 and establishes the factory and capability boundary used by every later task.
 - Task 10 depends on Task 09 and implements the four first-class providers; complete.
-- Task 12 depends on Tasks 09 and 10; its extension API must conform to the same contract as first-class adapters.
+- Task 12 depends on Tasks 09 and 10; its extension API must conform to the same contract as first-class adapters; complete.
 - Task 13 can begin after Task 10, but its final metadata assertions depend on the Task 12 contract names being stable.
 - Task 14 depends on Tasks 10, 12, and 13 and is the full validation checkpoint.
 - Tasks 15 and 16 are sequential documentation and publication work after behavior is stable.

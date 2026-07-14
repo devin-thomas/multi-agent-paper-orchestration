@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import warnings
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -16,6 +17,7 @@ except ModuleNotFoundError:  # pragma: no cover - Python 3.10 fallback
 from dotenv import load_dotenv
 
 SUPPORTED_PROVIDERS = frozenset({"openai", "anthropic", "gemini", "ollama"})
+PROVIDER_NAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
 DEFAULT_CONFIG_PATH = Path("model-providers.toml")
 
 
@@ -102,10 +104,9 @@ def _read_config(
             raise _configuration_error(f"profile {name!r} must be a TOML table")
         provider = values.get("provider")
         model = values.get("model")
-        if provider not in SUPPORTED_PROVIDERS:
-            supported = ", ".join(sorted(SUPPORTED_PROVIDERS))
+        if not isinstance(provider, str) or not PROVIDER_NAME_PATTERN.fullmatch(provider):
             raise _configuration_error(
-                f"profile {name!r} has provider {provider!r}; expected one of {supported}"
+                f"profile {name!r} has invalid provider {provider!r}; use a provider extension name"
             )
         if not isinstance(model, str) or not model:
             raise _configuration_error(f"profile {name!r} requires a non-empty model")

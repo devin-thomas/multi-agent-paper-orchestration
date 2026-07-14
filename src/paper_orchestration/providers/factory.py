@@ -10,6 +10,7 @@ from .base import (
     ModelCompatibilityError,
     ProviderAdapter,
 )
+from .extensions import ProviderExtensionRegistry, load_extension_registry
 from .first_class import build_first_class_adapter
 
 
@@ -30,10 +31,14 @@ class ModelFactory:
     """Resolve role overrides and preflight capabilities before Agent creation."""
 
     def __init__(
-        self, settings: Settings, adapters: dict[str, ProviderAdapter] | None = None
+        self,
+        settings: Settings,
+        adapters: dict[str, ProviderAdapter] | None = None,
+        extensions: ProviderExtensionRegistry | None = None,
     ) -> None:
         self.settings = settings
         self._adapters = adapters or {}
+        self._extensions = extensions or load_extension_registry()
 
     def resolve(self, role: str) -> ResolvedModel:
         model_name = self.settings.resolve_agent_model(role)
@@ -43,7 +48,10 @@ class ModelFactory:
         adapter = self._adapters.get(role) or self._adapters.get(provider)
         if adapter is None:
             profile = self._profile_for_role(role, provider)
-            adapter = build_first_class_adapter(provider, model, profile)
+            if provider in {"openai", "anthropic", "gemini", "ollama"}:
+                adapter = build_first_class_adapter(provider, model, profile)
+            else:
+                adapter = self._extensions.build(provider, model, profile)
         return ResolvedModel(role=role, provider=provider, model=model, adapter=adapter)
 
     def preflight(self, role: str) -> ResolvedModel:
