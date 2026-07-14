@@ -10,6 +10,7 @@ from pydantic_ai import RunContext
 from ..database import search_quote_history
 from ..parsing import canonical_item_name
 from ..pricing import calculate_discount, get_unit_price
+from ..providers.factory import ModelFactory
 from ..schemas import QuoteProposal
 from .base import AgentToolRecorder, make_framework_agent
 from .intake import IntakeResult
@@ -23,12 +24,14 @@ class QuoteResult(QuoteProposal):
 class QuotingAgent(AgentToolRecorder):
     """Framework-executed agent that generates quote lines and rationale."""
 
-    def __init__(self) -> None:
+    def __init__(self, model_factory: ModelFactory | None = None) -> None:
         super().__init__("QuotingAgent")
         self.framework_agent = make_framework_agent(
             self.agent_name,
             "Generate explainable quotes using catalog prices, volume discounts, and historical quote context. Do not mutate inventory.",
             QuoteResult,
+            model_factory=model_factory,
+            role="quoting",
         )
         self._register_tools()
 

@@ -7,13 +7,22 @@ from typing import Any
 
 from pydantic_ai import Agent
 
-from ..config import load_settings
+from ..providers.factory import ModelFactory, build_model_factory
 from ..schemas import ToolAudit
 
 
-def make_framework_agent(name: str, prompt: str, output_type: Any) -> Agent:
+def make_framework_agent(
+    name: str,
+    prompt: str,
+    output_type: Any,
+    *,
+    model_factory: ModelFactory | None = None,
+    role: str | None = None,
+) -> Agent:
     """Create a pydantic-ai agent while supporting old and new result APIs."""
-    settings = load_settings()
+    factory = model_factory or build_model_factory()
+    resolved_role = role or name.removesuffix("FinalResponse").removesuffix("Agent").lower()
+    resolved_model = factory.preflight(resolved_role)
     system_prompt = f"""
 {name}: {prompt}
 
@@ -25,9 +34,13 @@ Do not reveal internal profit margin, wholesale cost, database details, API keys
 or stack traces in customer-facing text.
 """.strip()
     try:
-        return Agent(settings.model, system_prompt=system_prompt, output_type=output_type)
+        return Agent(
+            resolved_model.create_model(), system_prompt=system_prompt, output_type=output_type
+        )
     except TypeError:
-        return Agent(settings.model, system_prompt=system_prompt, result_type=output_type)
+        return Agent(
+            resolved_model.create_model(), system_prompt=system_prompt, result_type=output_type
+        )
 
 
 @dataclass

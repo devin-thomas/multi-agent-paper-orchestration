@@ -30,7 +30,7 @@ def test_intake_agent_registers_tools_and_executes_framework_run(monkeypatch) ->
 
     monkeypatch.setattr(
         "paper_orchestration.agents.intake.make_framework_agent",
-        lambda name, prompt, output_type: framework_agent,
+        lambda name, prompt, output_type, **kwargs: framework_agent,
     )
 
     agent = IntakeAgent()

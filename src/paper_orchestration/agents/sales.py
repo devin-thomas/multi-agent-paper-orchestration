@@ -15,6 +15,7 @@ from ..database import (
 )
 from ..parsing import canonical_item_name
 from ..pricing import get_wholesale_cost
+from ..providers.factory import ModelFactory
 from ..schemas import SalesDecision, TransactionPlanLine
 from .base import AgentToolRecorder, make_framework_agent
 from .intake import IntakeResult
@@ -31,12 +32,14 @@ class SalesResult(SalesDecision):
 class SalesAgent(AgentToolRecorder):
     """Framework-executed agent that records only fully fulfillable firm orders."""
 
-    def __init__(self) -> None:
+    def __init__(self, model_factory: ModelFactory | None = None) -> None:
         super().__init__("SalesAgent")
         self.framework_agent = make_framework_agent(
             self.agent_name,
             "Finalize only fully fulfillable firm orders, record idempotent transactions, and report financial state.",
             SalesResult,
+            model_factory=model_factory,
+            role="sales",
         )
         self.pending_request_date = ""
         self.pending_transaction_plan: list[TransactionPlanLine] = []

@@ -29,6 +29,7 @@ class ProviderProfile:
     api_key_env: str | None = None
     base_url: str | None = None
     base_url_env: str | None = None
+    capabilities: frozenset[str] = frozenset({"structured_output", "tool_calling"})
 
 
 @dataclass(frozen=True)
@@ -112,6 +113,11 @@ def _read_config(
             value = values.get(field)
             if value is not None and (not isinstance(value, str) or not value):
                 raise _configuration_error(f"profile {name!r} has an invalid {field}")
+        raw_capabilities = values.get("capabilities", ["structured_output", "tool_calling"])
+        if not isinstance(raw_capabilities, list) or not all(
+            isinstance(capability, str) and capability for capability in raw_capabilities
+        ):
+            raise _configuration_error(f"profile {name!r} has invalid capabilities")
         profiles[name] = ProviderProfile(
             name=name,
             provider=provider,
@@ -119,6 +125,7 @@ def _read_config(
             api_key_env=values.get("api_key_env"),
             base_url=values.get("base_url"),
             base_url_env=values.get("base_url_env"),
+            capabilities=frozenset(raw_capabilities),
         )
     if default_profile not in profiles:
         raise _configuration_error(f"default profile {default_profile!r} is not defined")

@@ -17,6 +17,7 @@ from ..database import (
 )
 from ..parsing import canonical_item_name
 from ..pricing import calculate_discount, get_unit_price
+from ..providers.factory import ModelFactory, build_model_factory
 from ..schemas import InventoryAssessment, QuoteLine, ResponseEvaluation, ToolAudit, WorkflowResult
 from .base import AgentToolRecorder, make_framework_agent
 from .intake import IntakeAgent, IntakeResult
@@ -44,22 +45,28 @@ class FinalResponseDraft(BaseModel):
 class OrchestratorAgent(AgentToolRecorder):
     """Framework-executed coordinator plus evaluator for the five-agent system."""
 
-    def __init__(self) -> None:
+    def __init__(self, model_factory: ModelFactory | None = None) -> None:
         super().__init__("OrchestratorAgent")
+        factory = model_factory or build_model_factory()
+        factory.preflight_team(("orchestrator", "intake", "inventory", "quoting", "sales"))
         self.framework_agent = make_framework_agent(
             self.agent_name,
             "Coordinate Intake, Inventory, Quoting, and Sales agents, then synthesize and evaluate the final customer response.",
             OrchestrationPlan,
+            model_factory=factory,
+            role="orchestrator",
         )
         self.final_response_agent = make_framework_agent(
             f"{self.agent_name}FinalResponse",
             "Write a concise, transparent customer-facing response from validated business facts. Do not call tools.",
             FinalResponseDraft,
+            model_factory=factory,
+            role="orchestrator",
         )
-        self.intake_agent = IntakeAgent()
-        self.inventory_agent = InventoryAgent()
-        self.quoting_agent = QuotingAgent()
-        self.sales_agent = SalesAgent()
+        self.intake_agent = IntakeAgent(model_factory=factory)
+        self.inventory_agent = InventoryAgent(model_factory=factory)
+        self.quoting_agent = QuotingAgent(model_factory=factory)
+        self.sales_agent = SalesAgent(model_factory=factory)
         self._register_tools()
 
     def _register_tools(self) -> None:

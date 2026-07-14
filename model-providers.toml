@@ -5,21 +5,25 @@ default_profile = "ollama"
 provider = "openai"
 model = "gpt-4o-mini"
 api_key_env = "OPENAI_API_KEY"
+capabilities = ["structured_output", "tool_calling"]
 
 [profiles.anthropic]
 provider = "anthropic"
 model = "claude-3-5-sonnet-latest"
 api_key_env = "ANTHROPIC_API_KEY"
+capabilities = ["structured_output", "tool_calling"]
 
 [profiles.gemini]
 provider = "gemini"
 model = "gemini-2.0-flash"
 api_key_env = "GEMINI_API_KEY"
+capabilities = ["structured_output", "tool_calling"]
 
 [profiles.ollama]
 provider = "ollama"
 model = "gpt-oss:20b"
 base_url = "http://127.0.0.1:11434/v1"
+capabilities = ["structured_output", "tool_calling"]
 
 # Advanced role overrides are configuration-only.
 # [agents.quoting]

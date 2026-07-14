@@ -196,6 +196,8 @@ Suggested headline:
 
 - Task 08, Provider Configuration Contract, is complete. Versioned TOML profiles now cover OpenAI, Anthropic, Gemini, and Ollama; environment-variable secret references, global selection, role overrides, and targeted legacy migration warnings are validated without importing agent modules. Work log: started 2026-07-14 10:13:24 CDT, completed in this task loop.
 
+- Task 09, Model Factory And Capability Preflight, is complete. All five workflow roles now resolve through a project-owned provider adapter factory, configuration-only role overrides are honored, and team capability preflight rejects missing structured-output or tool-calling support before agent construction. Work log: started 2026-07-14 12:42:09 CDT, completed in this task loop.
+
 ## Remaining Dependency Plan
 
 - Task 08 is the next task and defines the provider-neutral configuration contract.

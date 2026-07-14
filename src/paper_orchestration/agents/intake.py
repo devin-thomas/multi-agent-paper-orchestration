@@ -13,6 +13,7 @@ from ..parsing import (
     parse_requested_delivery_date,
     resolve_item_name,
 )
+from ..providers.factory import ModelFactory
 from ..schemas import ParsedRequest
 from .base import AgentToolRecorder, make_framework_agent
 
@@ -24,13 +25,15 @@ class IntakeResult(ParsedRequest):
 class IntakeAgent(AgentToolRecorder):
     """Framework-executed agent that turns raw customer text into structured order intent."""
 
-    def __init__(self) -> None:
+    def __init__(self, model_factory: ModelFactory | None = None) -> None:
         super().__init__("IntakeAgent")
         self.framework_agent = make_framework_agent(
             self.agent_name,
             "Extract delivery date, firm-order intent, quantities, and catalog-resolved item names "
             "from the customer request.",
             IntakeResult,
+            model_factory=model_factory,
+            role="intake",
         )
         self._register_tools()
 

@@ -10,6 +10,7 @@ from pydantic_ai import RunContext
 
 from ..database import get_all_inventory, get_stock_level, get_supplier_delivery_date
 from ..parsing import canonical_item_name
+from ..providers.factory import ModelFactory
 from ..schemas import InventoryAssessment
 from .base import AgentToolRecorder, make_framework_agent
 from .intake import IntakeResult
@@ -23,12 +24,14 @@ class InventoryResult(BaseModel):
 class InventoryAgent(AgentToolRecorder):
     """Framework-executed agent that checks stock and reorder feasibility."""
 
-    def __init__(self) -> None:
+    def __init__(self, model_factory: ModelFactory | None = None) -> None:
         super().__init__("InventoryAgent")
         self.framework_agent = make_framework_agent(
             self.agent_name,
             "Check stock, reorder needs, and supplier delivery dates. Do not quote prices or record sales.",
             InventoryResult,
+            model_factory=model_factory,
+            role="inventory",
         )
         self._register_tools()
 
