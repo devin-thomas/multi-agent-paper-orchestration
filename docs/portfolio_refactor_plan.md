@@ -91,7 +91,7 @@ Use the NASA RAG README style:
 
 1. One-sentence value proposition.
 2. Short "How it works" section with Mermaid architecture.
-3. Quick start with `OPENAI_API_KEY`, not `UDACITY_OPENAI_API_KEY`.
+3. Quick start with local Ollama plus equivalent OpenAI, Claude, and Gemini profiles.
 4. Make shortcuts.
 5. Evaluation results table.
 6. Project structure.
@@ -101,6 +101,18 @@ Use the NASA RAG README style:
 Suggested headline:
 
 > Multi-agent paper sales orchestration system using pydantic-ai, SQLite-backed tools, structured outputs, deterministic validation, and reproducible evaluation.
+
+## Approved Model Portability Decisions
+
+- Keep Pydantic AI as the default integration layer behind a thin, project-owned adapter and factory boundary.
+- Use one global model profile by default, with advanced configuration-only overrides for each agent role.
+- Treat OpenAI, Anthropic Claude, Google Gemini, and Ollama as first-class verified providers.
+- Support other providers through a documented adapter registration API and reusable conformance suite.
+- Require structured output and tool-use capabilities. Adapters may provide native or validated emulated support, but incompatible models must fail preflight with a precise error rather than run in a degraded mode.
+- Store non-secret profiles in TOML, credentials in environment variables, and allow only `--profile` and global `--model` CLI overrides.
+- Include all first-class dependencies by default for easier setup, subject to an installed-size verification.
+- Use fakes for paid-provider CI checks and real local Ollama for live integration coverage.
+- Preserve current OpenAI environment variables as deprecated migration fallbacks.
 
 ## Small Tasks
 
@@ -136,19 +148,31 @@ Suggested headline:
    - Support input/output paths, DB reset path, optional sleep, and artifact directory.
    - Preserve the current metrics and CSV columns.
 
-8. **Tests And CI**
-   - Add pytest tests for deterministic modules first.
-   - Add an LLM-light smoke test that uses fakes/mocks, not live OpenAI calls.
-   - Add GitHub Actions for `ruff` and `pytest`.
+8. **Provider Configuration Contract**
+   - Add typed TOML profiles, a global default, per-agent overrides, environment-secret references, and legacy migration warnings.
 
-9. **Portfolio Documentation**
-   - Write README, `docs/architecture.md`, `docs/evaluation.md`, Mermaid diagram, and sample output snippets.
-   - Emphasize syllabus skills: routing, parallelization opportunities, structured outputs, tool use, database interaction, state coordination, evaluation.
+9. **Model Factory And Capability Preflight**
+   - Route all agent construction through a project-owned factory and reject models that cannot safely provide required structured output or tool use.
 
-10. **Polish, GitHub Publish Prep**
-   - Run formatting, linting, tests, and evaluation.
-   - Confirm no database artifacts, secrets, logs, or bulky generated files are committed unless intentionally placed under `examples/` or `docs/`.
-   - After the remote repo is created, set remote, push, and optionally add repo topics.
+10. **First-Class Model Providers**
+   - Implement and fake-test OpenAI, Claude, Gemini, and Ollama adapters with default-installed dependencies.
+
+11. **Spicy Replay Dataset** - complete out of sequence and archived under `docs/done/`.
+
+12. **Provider Extensions And Conformance**
+   - Add external adapter registration, a reference adapter, and a reusable conformance suite.
+
+13. **Evaluation Model Selection**
+   - Add global `--profile` and `--model` overrides and write secret-free effective model metadata.
+
+14. **Provider Tests And CI**
+   - Use fakes in hosted CI and expand real local Ollama coverage across the complete workflow.
+
+15. **Portfolio Documentation**
+   - Document every first-class provider, advanced overrides, extension support, testing boundaries, and limitations.
+
+16. **Polish And Publish Prep**
+   - Run the complete validation matrix, audit artifacts and dependencies, then publish and verify the repository.
 
 ## Completed Tasks
 
@@ -166,29 +190,23 @@ Suggested headline:
 
 - Task 07, Evaluation CLI, is complete. `python -m paper_orchestration.evaluation` now supports input, artifact, output, database, sleep, and reset controls; writes preserved audit columns; and prints a concise summary. Work log: started 2026-07-14 09:23:41 CDT, completed in this task loop.
 
-## Parallelization Plan
+- Task 11, Spicy Replay Dataset, is complete. The alternate 32-request seeded fixture and generator are preserved separately from the original dataset.
 
-- Tasks 1 and 2 should happen first because every other branch depends on repo shape and environment configuration.
-- After Task 3 creates the package skeleton, these can run in parallel:
-  - Task 4: data/database layer
-  - Task 5: schemas/parsing/pricing
-  - Task 9: documentation draft using current behavior and diagram
-- Task 6 depends on Tasks 4 and 5.
-- Task 7 depends on Task 6 enough to call the package, but CSV/report polishing can start earlier.
-- Task 8 can start as soon as Tasks 4 and 5 expose importable modules.
-- Task 10 is last.
+- Pre-task Ollama validation is complete. The current settings loader accepts `PAPER_ORCHESTRATION_MODEL=ollama:gpt-oss:20b` without OpenAI credentials, defaults the local endpoint, and the marked integration test verifies real structured output and tool execution.
 
-## Suggested First Implementation Slice
+## Remaining Dependency Plan
 
-Do Tasks 1-2 plus a minimal Task 3:
+- Task 08 is the next task and defines the provider-neutral configuration contract.
+- Task 09 depends on Task 08 and establishes the factory and capability boundary used by every later task.
+- Task 10 depends on Task 09 and implements the four first-class providers.
+- Task 12 depends on Tasks 09 and 10; its extension API must conform to the same contract as first-class adapters.
+- Task 13 can begin after Task 10, but its final metadata assertions depend on the Task 12 contract names being stable.
+- Task 14 depends on Tasks 10, 12, and 13 and is the full validation checkpoint.
+- Tasks 15 and 16 are sequential documentation and publication work after behavior is stable.
 
-- Initialize the repo.
-- Copy `quote_requests.csv`, `quote_requests_sample.csv`, and the passing `project_starter.py` as `legacy/project_starter_passing.py`.
-- Create `src/paper_orchestration/config.py`.
-- Remove Vocareum assumptions in the working entrypoint.
-- Add `.env.example`, `pyproject.toml`, `Makefile`, and a README scaffold.
+## Next Implementation Slice
 
-This gives us a clean portfolio shell and a reversible baseline before the larger module split.
+Run Task 08 only. It should leave the existing local Ollama integration test and legacy OpenAI configuration green while introducing the TOML contract that Task 09 will consume. Do not start provider adapters inside Task 08.
 
 ## Task 11: Spicy Replay Dataset
 

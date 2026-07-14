@@ -8,8 +8,16 @@ def test_portfolio_plan_exists() -> None:
 def test_remaining_task_briefs_exist() -> None:
     task_docs = sorted(Path("docs/tasks").glob("*.md"))
     done_docs = sorted(Path("docs/done").glob("*.md"))
-    assert len(task_docs) == 3
-    assert len(done_docs) == 8
+    assert [doc.name for doc in task_docs] == [
+        "08_provider_configuration_contract.md",
+        "09_model_factory_and_capability_preflight.md",
+        "10_first_class_model_providers.md",
+        "12_provider_extensions_and_conformance.md",
+        "13_evaluation_model_selection.md",
+        "14_provider_tests_and_ci.md",
+        "15_portfolio_documentation.md",
+        "16_polish_and_publish_prep.md",
+    ]
     assert [doc.name for doc in done_docs] == [
         "01_bootstrap_repository.md",
         "02_openai_configuration_cleanup.md",

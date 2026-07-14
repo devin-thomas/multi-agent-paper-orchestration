@@ -42,14 +42,30 @@ python -m pip install -e ".[dev]"
 copy .env.example .env
 ```
 
-Edit `.env` and set `OPENAI_API_KEY`. The optional `OPENAI_MODEL` setting selects the pydantic-ai model; `BEAVERS_CHOICE_AGENT_MODEL` remains a backwards-compatible fallback.
+The example configuration selects local `ollama:gpt-oss:20b`, which needs no API key. Start
+Ollama and pull that model before running live agents, or change
+`PAPER_ORCHESTRATION_MODEL` to an OpenAI model and set `OPENAI_API_KEY`. `OPENAI_MODEL` and
+`BEAVERS_CHOICE_AGENT_MODEL` remain backwards-compatible fallbacks while the provider-profile
+tasks are implemented.
+
+Run the full local suite with:
+
+```powershell
+pytest --basetemp tmp/pytest
+```
+
+When Ollama is running and `gpt-oss:20b` is installed, the suite automatically exercises real
+structured output and tool calling. Run only that live local check with
+`pytest --basetemp tmp/pytest -m ollama -rs`. The equivalent Make targets are `make test` and
+`make test-ollama` on systems with GNU Make. Set `OLLAMA_TEST_MODEL` to test a different installed
+Ollama model.
 
 The package skeleton and importable deterministic boundaries are in place. The files under `legacy/` remain the preserved behavior baseline while the remaining task briefs in `docs/tasks/` are completed.
 
 ## Evaluation CLI
 
-After setting `OPENAI_API_KEY`, run a reproducible evaluation with a fresh local database and
-ignored artifacts:
+After configuring either Ollama or OpenAI, run a reproducible evaluation with a fresh local
+database and ignored artifacts:
 
 ```powershell
 python -m paper_orchestration.evaluation --reset-database

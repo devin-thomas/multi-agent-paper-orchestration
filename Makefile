@@ -1,10 +1,13 @@
-.PHONY: install test lint format plan
+.PHONY: install test test-ollama lint format plan
 
 install:
 	python -m pip install -e ".[dev]"
 
 test:
-	pytest
+	pytest --basetemp tmp/pytest
+
+test-ollama:
+	pytest --basetemp tmp/pytest -m ollama -rs
 
 lint:
 	ruff check .
