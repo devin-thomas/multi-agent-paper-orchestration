@@ -15,4 +15,3 @@ Turn the evaluation runner into a reusable CLI that can regenerate the project e
 
 - A fresh user can run one documented command and produce an evaluation CSV.
 - The output captures agent route, tool calls, status, financial changes, and response quality.
-

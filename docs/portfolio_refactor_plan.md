@@ -164,6 +164,8 @@ Suggested headline:
 
 - Task 06, Agent Modules, is complete. The Intake, Inventory, Quoting, Sales, and Orchestrator agents now have framework-executed modules with registered pydantic-ai tools, shared construction and audit helpers, and deterministic orchestrator validation. Work log: started 2026-07-14 09:18:40 CDT, completed in this task loop.
 
+- Task 07, Evaluation CLI, is complete. `python -m paper_orchestration.evaluation` now supports input, artifact, output, database, sleep, and reset controls; writes preserved audit columns; and prints a concise summary. Work log: started 2026-07-14 09:23:41 CDT, completed in this task loop.
+
 ## Parallelization Plan
 
 - Tasks 1 and 2 should happen first because every other branch depends on repo shape and environment configuration.

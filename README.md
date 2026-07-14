@@ -46,6 +46,21 @@ Edit `.env` and set `OPENAI_API_KEY`. The optional `OPENAI_MODEL` setting select
 
 The package skeleton and importable deterministic boundaries are in place. The files under `legacy/` remain the preserved behavior baseline while the remaining task briefs in `docs/tasks/` are completed.
 
+## Evaluation CLI
+
+After setting `OPENAI_API_KEY`, run a reproducible evaluation with a fresh local database and
+ignored artifacts:
+
+```powershell
+python -m paper_orchestration.evaluation --reset-database
+```
+
+The command reads `data/quote_requests_sample.csv`, writes its CSV audit artifact and SQLite
+database under `outputs/`, and prints a concise outcome summary. Use `--input`, `--output`,
+`--database`, `--artifact-dir`, or `--sleep-seconds` to customize a run. The preserved request
+fixtures do not include request dates, so the runner assigns deterministic daily dates beginning
+on 2025-04-01.
+
 ## Passing Evaluation Baseline
 
 The preserved passing run processed 20 customer requests:
