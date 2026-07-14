@@ -15,4 +15,3 @@ Move typed models, request parsing, catalog canonicalization, and pricing rules 
 
 - Edge cases such as unknown items, A4/copy paper, quantity consolidation, and requested dates are covered.
 - Pricing totals remain deterministic and easy to audit.
-
