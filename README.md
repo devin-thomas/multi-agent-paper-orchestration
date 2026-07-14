@@ -62,6 +62,16 @@ Ollama model.
 
 The package skeleton and importable deterministic boundaries are in place. The files under `legacy/` remain the preserved behavior baseline while the remaining task briefs in `docs/tasks/` are completed.
 
+## Provider Configuration
+
+`model-providers.toml` is the versioned, secret-free configuration contract. It contains the
+global `default_profile`, named OpenAI, Anthropic, Gemini, and Ollama profiles, and optional
+`[agents.<role>]` overrides. Credentials stay in environment variables named by each profile's
+`api_key_env` field. Select a profile with `PAPER_ORCHESTRATION_PROFILE`; the existing
+`PAPER_ORCHESTRATION_MODEL`, `OPENAI_MODEL`, and `BEAVERS_CHOICE_AGENT_MODEL` variables remain
+available as migration fallbacks. Role overrides take precedence over the global profile/model,
+which takes precedence over those legacy variables.
+
 ## Evaluation CLI
 
 After configuring either Ollama or OpenAI, run a reproducible evaluation with a fresh local

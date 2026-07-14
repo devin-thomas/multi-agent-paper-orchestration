@@ -194,6 +194,8 @@ Suggested headline:
 
 - Pre-task Ollama validation is complete. The current settings loader accepts `PAPER_ORCHESTRATION_MODEL=ollama:gpt-oss:20b` without OpenAI credentials, defaults the local endpoint, and the marked integration test verifies real structured output and tool execution.
 
+- Task 08, Provider Configuration Contract, is complete. Versioned TOML profiles now cover OpenAI, Anthropic, Gemini, and Ollama; environment-variable secret references, global selection, role overrides, and targeted legacy migration warnings are validated without importing agent modules. Work log: started 2026-07-14 10:13:24 CDT, completed in this task loop.
+
 ## Remaining Dependency Plan
 
 - Task 08 is the next task and defines the provider-neutral configuration contract.
