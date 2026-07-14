@@ -19,7 +19,7 @@ class ParsedRequest(BaseModel):
 
 
 class InventoryAssessment(BaseModel):
-    item_name: str | None
+    item_name: str | None = None
     raw_item: str
     quantity: int
     current_stock: int = 0
@@ -27,7 +27,7 @@ class InventoryAssessment(BaseModel):
     can_fulfill: bool = False
     reorder_needed: bool = False
     reorder_delivery_date: str | None = None
-    reason: str
+    reason: str = ""
 
 
 class QuoteLine(BaseModel):

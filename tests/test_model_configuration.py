@@ -82,6 +82,36 @@ profile = \"anthropic\"
     assert set(settings.profiles) == {"openai", "anthropic", "gemini", "ollama"}
 
 
+def test_cli_style_profile_and_model_overrides_are_global(tmp_path: Path, monkeypatch) -> None:
+    config = tmp_path / "models.toml"
+    config.write_text(
+        """version = 1
+default_profile = "ollama"
+[profiles.ollama]
+provider = "ollama"
+model = "local-default"
+[profiles.openai]
+provider = "openai"
+model = "gpt-default"
+api_key_env = "OPENAI_API_KEY"
+[agents.quoting]
+profile = "openai"
+model = "gpt-advanced"
+""",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+
+    settings = load_settings(
+        config, profile_override="openai", model_override="gpt-global"
+    )
+
+    assert settings.profile_name == "openai"
+    assert settings.model == "openai:gpt-global"
+    assert settings.resolve_agent_model("intake") == "openai:gpt-global"
+    assert settings.resolve_agent_model("quoting") == "openai:gpt-advanced"
+
+
 def test_legacy_only_configuration_warns_and_preserves_model(monkeypatch) -> None:
     monkeypatch.setenv("OPENAI_MODEL", "openai:gpt-4o-mini")
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")

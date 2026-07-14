@@ -202,13 +202,15 @@ Suggested headline:
 
 - Task 12, Provider Extensions And Conformance, is complete. Extension providers can register through the `paper_orchestration.providers` entry-point group or an explicit registry, use the shared adapter contract, and validate offline through the reusable conformance assertion and reference adapter. Work log: started 2026-07-14 16:11:45 CDT, completed in this task loop.
 
+- Task 13, Evaluation Model Selection, is complete. The evaluation CLI now supports global `--profile` and `--model` overrides, validates all five roles before database initialization, and writes secret-free global and per-agent model metadata. Work log: started 2026-07-14 16:26:09 CDT, completed in this task loop.
+
 ## Remaining Dependency Plan
 
 - Task 08 is the next task and defines the provider-neutral configuration contract.
 - Task 09 depends on Task 08 and establishes the factory and capability boundary used by every later task.
 - Task 10 depends on Task 09 and implements the four first-class providers; complete.
 - Task 12 depends on Tasks 09 and 10; its extension API must conform to the same contract as first-class adapters; complete.
-- Task 13 can begin after Task 10, but its final metadata assertions depend on the Task 12 contract names being stable.
+- Task 13 can begin after Task 10, but its final metadata assertions depend on the Task 12 contract names being stable; complete.
 - Task 14 depends on Tasks 10, 12, and 13 and is the full validation checkpoint.
 - Tasks 15 and 16 are sequential documentation and publication work after behavior is stable.
 

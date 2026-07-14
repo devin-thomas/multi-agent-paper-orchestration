@@ -87,6 +87,11 @@ database under `outputs/`, and prints a concise outcome summary. Use `--input`, 
 fixtures do not include request dates, so the runner assigns deterministic daily dates beginning
 on 2025-04-01.
 
+Use `--profile` to select any configured provider and `--model` for a global model override. The
+runner validates all five workflow roles before creating the database, and writes secret-free
+effective model metadata to `outputs/evaluation_metadata.json`; advanced per-agent overrides
+remain in `model-providers.toml`.
+
 ## Passing Evaluation Baseline
 
 The preserved passing run processed 20 customer requests:

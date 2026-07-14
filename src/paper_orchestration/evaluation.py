@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import time
 from pathlib import Path
@@ -10,7 +11,9 @@ from pathlib import Path
 import pandas as pd
 
 from .agents.orchestrator import build_agent_team
+from .config import Settings, load_settings
 from .database import init_database
+from .providers.factory import ModelFactory, build_model_factory
 from .schemas import WorkflowResult
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -39,6 +42,7 @@ RESULT_COLUMNS = [
     "evaluation_findings",
     "response",
 ]
+WORKFLOW_ROLES = ("orchestrator", "intake", "inventory", "quoting", "sales")
 
 
 def load_requests(input_path: Path) -> pd.DataFrame:
@@ -103,24 +107,50 @@ def print_final_summary(results: list[WorkflowResult], output_path: Path) -> Non
     print(f"Results: {output_path}")
 
 
+def effective_model_metadata(settings: Settings) -> dict[str, object]:
+    """Return only non-secret settings needed to reproduce model selection."""
+    return {
+        "profile": settings.profile_name,
+        "provider": settings.provider,
+        "global_model": settings.model,
+        "agent_models": {
+            role: settings.resolve_agent_model(role) for role in WORKFLOW_ROLES
+        },
+    }
+
+
+def write_model_metadata(settings: Settings, metadata_path: Path) -> None:
+    metadata_path.parent.mkdir(parents=True, exist_ok=True)
+    metadata_path.write_text(
+        json.dumps(effective_model_metadata(settings), indent=2) + "\n", encoding="utf-8"
+    )
+
+
 def run_evaluation(
     input_path: Path,
     output_path: Path,
     database_path: Path,
     sleep_seconds: float = 0.0,
     reset_database: bool = False,
+    settings: Settings | None = None,
+    metadata_path: Path | None = None,
 ) -> list[WorkflowResult]:
     """Run the agent workflow over one CSV fixture and write its audit artifact."""
     if sleep_seconds < 0:
         raise ValueError("sleep_seconds must be non-negative")
 
+    effective_settings = settings or load_settings()
+    model_factory: ModelFactory = build_model_factory(effective_settings)
+    model_factory.preflight_team(WORKFLOW_ROLES)
     requests = load_requests(input_path)
+    if metadata_path is not None:
+        write_model_metadata(effective_settings, metadata_path)
     if reset_database or not database_path.exists():
         init_database(database_path=database_path)
 
     # Agent tools use the configured default database path; the runner passes it explicitly.
     os.environ["BEAVERS_CHOICE_DB_PATH"] = str(database_path)
-    orchestrator = build_agent_team()
+    orchestrator = build_agent_team(effective_settings)
     results: list[WorkflowResult] = []
 
     for request_id, (_, row) in enumerate(requests.iterrows(), start=1):
@@ -148,6 +178,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--sleep-seconds", type=float, default=0.0)
     parser.add_argument("--reset-database", action="store_true")
+    parser.add_argument(
+        "--profile", help="Configured provider profile to use for the whole evaluation."
+    )
+    parser.add_argument(
+        "--model", help="Global model override; advanced role overrides remain in TOML."
+    )
     return parser
 
 
@@ -155,12 +191,15 @@ def main(argv: list[str] | None = None) -> None:
     args = build_parser().parse_args(argv)
     output_path = args.output or args.artifact_dir / "evaluation_results.csv"
     database_path = args.database or args.artifact_dir / "munder_difflin.db"
+    settings = load_settings(profile_override=args.profile, model_override=args.model)
     run_evaluation(
         input_path=args.input,
         output_path=output_path,
         database_path=database_path,
         sleep_seconds=args.sleep_seconds,
         reset_database=args.reset_database,
+        settings=settings,
+        metadata_path=args.artifact_dir / "evaluation_metadata.json",
     )
 
 

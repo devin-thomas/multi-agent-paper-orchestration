@@ -10,6 +10,7 @@ import pandas as pd
 from pydantic import BaseModel, Field
 from pydantic_ai import RunContext
 
+from ..config import Settings
 from ..database import (
     generate_financial_report,
     get_stock_quantity,
@@ -658,6 +659,6 @@ If order status is fulfilled_sale_recorded, do not ask the customer to confirm; 
         return audits
 
 
-def build_agent_team() -> OrchestratorAgent:
+def build_agent_team(settings: Settings | None = None) -> OrchestratorAgent:
     """Build the complete framework-executed five-agent workflow."""
-    return OrchestratorAgent()
+    return OrchestratorAgent(model_factory=build_model_factory(settings))

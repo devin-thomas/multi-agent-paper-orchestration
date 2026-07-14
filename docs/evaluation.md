@@ -27,3 +27,11 @@ The portfolio refactor should preserve these columns where practical:
 - response quality findings
 - customer response
 
+## Model Selection
+
+The evaluation CLI accepts only the global `--profile` and `--model` model-selection overrides.
+Credentials, endpoints, and per-agent overrides remain configuration-only. Before initializing
+the SQLite database, the runner preflights the orchestrator, intake, inventory, quoting, and
+sales roles. It writes the selected profile, global model, and resolved per-agent models to the
+secret-free `evaluation_metadata.json` artifact beside the CSV output.
+

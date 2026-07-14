@@ -152,7 +152,12 @@ def _read_config(
     return default_profile, profiles, overrides
 
 
-def load_settings(config_path: str | Path | None = None) -> Settings:
+def load_settings(
+    config_path: str | Path | None = None,
+    *,
+    profile_override: str | None = None,
+    model_override: str | None = None,
+) -> Settings:
     """Load provider settings without requiring configuration at import time."""
     load_dotenv()
     env = os.environ
@@ -160,7 +165,7 @@ def load_settings(config_path: str | Path | None = None) -> Settings:
     default_profile, profiles, overrides = _read_config(path)
     legacy_model = env.get("OPENAI_MODEL") or env.get("BEAVERS_CHOICE_AGENT_MODEL")
     explicit_model = env.get("PAPER_ORCHESTRATION_MODEL")
-    selected_name = env.get("PAPER_ORCHESTRATION_PROFILE") or default_profile
+    selected_name = profile_override or env.get("PAPER_ORCHESTRATION_PROFILE") or default_profile
     used_legacy = (
         not explicit_model
         and not env.get("PAPER_ORCHESTRATION_PROFILE")
@@ -199,7 +204,7 @@ def load_settings(config_path: str | Path | None = None) -> Settings:
         raise _configuration_error(f"selected profile {selected_name!r} is not defined")
 
     profile = profiles[selected_name]
-    model = explicit_model or profile.model
+    model = model_override or explicit_model or profile.model
     provider = profile.provider
     if ":" in model:
         prefix, _, model_name = model.partition(":")
