@@ -22,4 +22,3 @@ Split the five pydantic-ai agents into separate modules while preserving framewo
 - Each agent has one clear module and responsibility.
 - Tool audit output still identifies agent and tool names.
 - The prior reviewer concern is visibly addressed: framework agents are executed, not merely used as tool registries.
-
