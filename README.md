@@ -10,7 +10,7 @@ This repository is the portfolio refactor target for the Udacity Agentic AI Nano
 - `data/` contains the customer request datasets used for historical quoting and evaluation.
 - `examples/test_results_passing.csv` preserves the passing evaluation output.
 - `docs/portfolio_refactor_plan.md` is the main plan.
-- `docs/tasks/` contains ten standalone task briefs for piecemeal future work.
+- `docs/tasks/` contains the remaining standalone task briefs for piecemeal future work; completed briefs move to `docs/done/`.
 
 The repo has been initialized this way so work can continue from another machine without needing the original chat context.
 
@@ -42,9 +42,9 @@ python -m pip install -e ".[dev]"
 copy .env.example .env
 ```
 
-Edit `.env` and set `OPENAI_API_KEY`.
+Edit `.env` and set `OPENAI_API_KEY`. The optional `OPENAI_MODEL` setting selects the pydantic-ai model; `BEAVERS_CHOICE_AGENT_MODEL` remains a backwards-compatible fallback.
 
-The refactored package is not implemented yet. Until then, use the files under `legacy/` as the preserved baseline and follow the task briefs in `docs/tasks/`.
+The package skeleton and importable deterministic boundaries are in place. The files under `legacy/` remain the preserved behavior baseline while the remaining task briefs in `docs/tasks/` are completed.
 
 ## Passing Evaluation Baseline
 
@@ -60,6 +60,18 @@ The preserved passing run processed 20 customer requests:
 | Gross sales recorded | $1,413.50 |
 | Restock spend recorded | $628.23 |
 | Net cash change | $785.27 |
+
+## Replay Spice
+
+The original 100-request fixture remains the preserved baseline. For a fresh run, use the separate seeded workload at `data/quote_requests_spicy.csv`: it contains 32 reproducible requests spanning compact replenishment orders, enterprise-scale buys, specialty products, and rush deliveries, so the mix and aggregate outcome should differ substantially from the original evaluation.
+
+Regenerate it with:
+
+```bash
+python scripts/generate_spicy_dataset.py
+```
+
+The generator uses seed `271828`; the alternate fixture is additive and never overwrites `data/quote_requests.csv`.
 
 ## Project Direction
 
@@ -87,4 +99,3 @@ Key portfolio signals:
 ├── src/paper_orchestration/      # Refactored package target
 └── tests/                        # Future deterministic and smoke tests
 ```
-

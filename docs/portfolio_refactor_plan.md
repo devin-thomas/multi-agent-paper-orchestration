@@ -150,6 +150,16 @@ Suggested headline:
    - Confirm no database artifacts, secrets, logs, or bulky generated files are committed unless intentionally placed under `examples/` or `docs/`.
    - After the remote repo is created, set remote, push, and optionally add repo topics.
 
+## Completed Tasks
+
+- Task 01, Bootstrap Repository, is complete. The repository scaffold, preserved capstone artifacts, datasets, evaluation output, task briefs, ignore rules, and project metadata are present; the completed brief is archived under `docs/done/`.
+
+- Task 02, OpenAI Configuration Cleanup, is complete. The legacy entrypoint now uses `OPENAI_API_KEY`, supports `OPENAI_MODEL` with the legacy model variable as fallback, removes the forced Vocareum URL, and documents the runtime behavior. Work log: started 2026-07-09 23:16:35 CDT, ended 2026-07-09 23:17:12 CDT, 37 seconds / 0.6 minutes worked.
+
+- Task 03, Package Skeleton And Imports, is complete. The package now has explicit configuration, catalog, schema, parsing, pricing, database, tools, evaluation, and agent boundaries; the legacy executable remains the behavior reference. Work log: started 2026-07-09 23:18:22 CDT, ended 2026-07-09 23:20:32 CDT, 130 seconds / 2.2 minutes worked.
+
+- Task 04, Data And Database Layer, is complete. SQLite initialization, deterministic inventory, transaction recording, inventory snapshots, supplier dates, cash balances, financial reports, and quote-history search now live in `paper_orchestration.database`; the completed brief is archived under `docs/done/`. Work log: started 2026-07-09 23:22:37 CDT, ended 2026-07-09 23:25:51 CDT, 194 seconds / 3.2 minutes worked.
+
 ## Parallelization Plan
 
 - Tasks 1 and 2 should happen first because every other branch depends on repo shape and environment configuration.
@@ -173,3 +183,13 @@ Do Tasks 1-2 plus a minimal Task 3:
 - Add `.env.example`, `pyproject.toml`, `Makefile`, and a README scaffold.
 
 This gives us a clean portfolio shell and a reversible baseline before the larger module split.
+
+## Task 11: Spicy Replay Dataset
+
+- Add a separate, reproducible randomized request fixture for repeat evaluations.
+- Keep the original 100-request `data/quote_requests.csv` unchanged.
+- Generate 32 varied requests with seed `271828` using `scripts/generate_spicy_dataset.py`.
+- Document the alternate workload and regeneration command in the README.
+- Validate the new fixture's schema, row count, reproducibility, and separation from the original data.
+
+Task 11 is complete; its brief is archived under `docs/done/11_spicy_replay_dataset.md`.

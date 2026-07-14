@@ -5,7 +5,15 @@ def test_portfolio_plan_exists() -> None:
     assert Path("docs/portfolio_refactor_plan.md").exists()
 
 
-def test_ten_task_briefs_exist() -> None:
+def test_remaining_task_briefs_exist() -> None:
     task_docs = sorted(Path("docs/tasks").glob("*.md"))
-    assert len(task_docs) == 10
-
+    done_docs = sorted(Path("docs/done").glob("*.md"))
+    assert len(task_docs) == 6
+    assert len(done_docs) == 5
+    assert [doc.name for doc in done_docs] == [
+        "01_bootstrap_repository.md",
+        "02_openai_configuration_cleanup.md",
+        "03_package_skeleton_and_imports.md",
+        "04_data_and_database_layer.md",
+        "11_spicy_replay_dataset.md",
+    ]

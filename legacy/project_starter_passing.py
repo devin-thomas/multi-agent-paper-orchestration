@@ -29,14 +29,14 @@ FRAMEWORK_NAME = "pydantic-ai"
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = Path(os.getenv("BEAVERS_CHOICE_DB_PATH", BASE_DIR / "munder_difflin.db"))
 
-UDACITY_OPENAI_API_KEY = os.getenv("UDACITY_OPENAI_API_KEY")
-if not UDACITY_OPENAI_API_KEY:
-    raise RuntimeError("Set UDACITY_OPENAI_API_KEY before running this project.")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    raise RuntimeError("Set OPENAI_API_KEY in .env or the environment before running this project.")
 
-os.environ["OPENAI_API_KEY"] = UDACITY_OPENAI_API_KEY
-os.environ["OPENAI_BASE_URL"] = "https://openai.vocareum.com/v1"
-
-AGENT_MODEL = os.getenv("BEAVERS_CHOICE_AGENT_MODEL", "openai:gpt-4o-mini")
+AGENT_MODEL = os.getenv(
+    "OPENAI_MODEL",
+    os.getenv("BEAVERS_CHOICE_AGENT_MODEL", "openai:gpt-4o-mini"),
+)
 
 paper_supplies = [
     {"item_name": "A4 paper", "category": "paper", "unit_price": 0.05},

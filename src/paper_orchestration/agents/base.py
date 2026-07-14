@@ -1,0 +1,1 @@
+"""Shared agent construction boundary."""
